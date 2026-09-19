@@ -1,10 +1,6 @@
  <?php
 
- // Database configuration
-$host     = 'localhost';
-$dbname   = 'contact_db';
-$username = 'root';        // Change to your DB username
-$password = '';            // Change to your DB password
+ require_once 'common/db.php';
 
 $statusMessage = '';
 $statusType    = '';
@@ -26,12 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statusType    = 'error';
     } else {
         try {
-            // Establish PDO database connection
-            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]);
-
             // Prepared statement prevents SQL injection
             $sql  = "INSERT INTO messages (name, email, message) VALUES (:name, :email, :message)";
             $stmt = $pdo->prepare($sql);
