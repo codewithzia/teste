@@ -9,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
       <a href="index.php">Home</a>
       <a href="about.php">About</a>
       <a href="skills.php">Skills</a>
+      <a href="projects.php">Projects</a>
       <a href="contact.php">Contact</a>
       <?php if (!empty($_SESSION['user_id'])): ?>
         <a href="admin.php">Admin</a>
