@@ -5,7 +5,6 @@ require_once 'common/db.php';
 $statusMessage = '';
 $statusType    = '';
 $editProject   = null;
-    echo "User type: " . ($_SESSION['user_type'] ?? 'not set') . "\n"; // Debugging line
 // Handle form submissions (create, update, delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
