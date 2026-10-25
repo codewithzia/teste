@@ -1,12 +1,17 @@
 <?php
+session_start();
 require_once 'common/db.php';
 
 $statusMessage = '';
 $statusType    = '';
 $editProject   = null;
-
+    echo "User type: " . ($_SESSION['user_type'] ?? 'not set') . "\n"; // Debugging line
 // Handle form submissions (create, update, delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
+        http_response_code(401);
+        exit('Unauthorized');
+    }
     $action      = $_POST['action'] ?? '';
     $title       = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -75,7 +80,8 @@ try {
             <?= htmlspecialchars($statusMessage) ?>
         </div>
     <?php endif; ?>
-
+    <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
+        <p><a href="projects.php" class="btn" style="background: var(--accent-color);">Add New Project</a></p>
     <h2 style="margin-bottom: 1rem;"><?= $editProject ? 'Edit Project' : 'Add Project' ?></h2>
     <form action="projects.php" method="POST">
       <input type="hidden" name="action" value="<?= $editProject ? 'update' : 'create' ?>">
@@ -95,7 +101,7 @@ try {
         <a href="projects.php" class="btn" style="background: var(--text-muted);">Cancel</a>
       <?php endif; ?>
     </form>
-
+    <?php endif; ?>
     <h2 style="margin: 2rem 0 1rem;">All Projects</h2>
     <?php if (empty($projects)): ?>
         <p>No projects yet.</p>
@@ -104,12 +110,14 @@ try {
             <div style="background: var(--card-bg); border: 1px solid #334155; border-radius: 0.375rem; padding: 1rem; margin-bottom: 1rem;">
                 <p style="margin-bottom: 0.25rem; color: var(--text-color);"><strong><?= htmlspecialchars($project['title']) ?></strong></p>
                 <p style="margin-bottom: 0.5rem;"><?= nl2br(htmlspecialchars($project['description'])) ?></p>
-                <a href="projects.php?edit=<?= (int) $project['id'] ?>" style="color: var(--accent-color); margin-right: 1rem;">Edit</a>
+                <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): ?>
+                    <a href="projects.php?edit=<?= (int) $project['id'] ?>" style="color: var(--accent-color); margin-right: 1rem;">Edit</a>        
                 <form action="projects.php" method="POST" style="display: inline;" onsubmit="return confirm('Delete this project?');">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="id" value="<?= (int) $project['id'] ?>">
                     <button type="submit" style="background: none; border: none; color: #f87171; cursor: pointer; font-size: inherit; padding: 0;">Delete</button>
                 </form>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>

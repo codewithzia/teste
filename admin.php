@@ -7,6 +7,10 @@ if (empty($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
+if(!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
+    header('Location: index.php');
+    exit;
+}
 
 // Fetch contact messages for the dashboard
 $messages = [];

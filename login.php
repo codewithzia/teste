@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statusType    = 'error';
     } else {
         try {
-            $stmt = $pdo->prepare("SELECT id, name, password FROM users WHERE email = :email");
+            $stmt = $pdo->prepare("SELECT id, name, password, user_type FROM users WHERE email = :email");
             $stmt->execute([':email' => $email]);
             $user = $stmt->fetch();
 
@@ -37,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_regenerate_id(true);
                 $_SESSION['user_id']   = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
-
+                $_SESSION['user_type'] = $user['user_type'];
+                //echo "Logged in as: " . htmlspecialchars($user['name']) . " (" . htmlspecialchars($user['user_type']) . ")";
                 header('Location: admin.php');
                 exit;
             }
